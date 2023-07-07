@@ -1,0 +1,45 @@
+// Load the Google Sheets API client library
+gapi.load('client', initClient);
+
+// Initialize the API client and make the request
+function initClient() {
+  gapi.client.init({
+    apiKey: 'YOUR_API_KEY',
+    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+  }).then(function() {
+    // Call the function to add all columns
+    addAllColumns();
+  }, function(error) {
+    console.log('Error initializing the API client: ', error);
+  });
+}
+
+// Function to add all columns in a Google Sheet
+function addAllColumns() {
+  // Specify the spreadsheet ID and range
+  var spreadsheetId = 'YOUR_SPREADSHEET_ID';
+  var range = 'Sheet1!A1:Z';
+
+  // Make a request to retrieve the values from the specified range
+  gapi.client.sheets.spreadsheets.values.get({
+    spreadsheetId: spreadsheetId,
+    range: range,
+  }).then(function(response) {
+    var values = response.result.values;
+    var total = 0;
+
+    // Iterate through each row and sum the values in each column
+    for (var i = 0; i < values.length; i++) {
+      for (var j = 0; j < values[i].length; j++) {
+        var value = parseFloat(values[i][j]);
+        if (!isNaN(value)) {
+          total += value;
+        }
+      }
+    }
+
+    console.log('Total sum of all columns: ', total);
+  }, function(error) {
+    console.log('Error retrieving values: ', error);
+  });
+}
