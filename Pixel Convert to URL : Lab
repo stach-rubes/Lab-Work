@@ -1,0 +1,40 @@
+// Create an HTMLImageElement and set the source to your image file
+var image = new Image();
+image.src = 'path/to/your/image.jpg';
+
+// Wait for the image to load
+image.onload = function() {
+  // Create a canvas element
+  var canvas = document.createElement('canvas');
+  var context = canvas.getContext('2d');
+
+  // Set the canvas dimensions to match the image
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  // Draw the image onto the canvas
+  context.drawImage(image, 0, 0);
+
+  // Get the image data
+  var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  var pixels = imageData.data;
+
+  // Loop through each pixel and convert it to 8-bit
+  for (var i = 0; i < pixels.length; i += 4) {
+    // Convert RGB values to grayscale
+    var grayscale = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+
+    // Set the pixel values to the grayscale value
+    pixels[i] = grayscale; // Red channel
+    pixels[i + 1] = grayscale; // Green channel
+    pixels[i + 2] = grayscale; // Blue channel
+  }
+
+  // Update the image data with the modified pixels
+  context.putImageData(imageData, 0, 0);
+
+  // Convert the canvas to a data URL
+  var convertedImage = canvas.toDataURL();
+
+  // Use the convertedImage as needed (e.g., display or download)
+};
